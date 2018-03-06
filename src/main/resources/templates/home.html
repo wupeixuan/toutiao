@@ -1,0 +1,103 @@
+#parse("header.html")
+<div id="main">
+    <div class="container" id="daily">
+        <div class="jscroll-inner">
+            <div class="daily">
+                #set($cur_date = '')
+                #foreach($vo in $vos)
+                #if ($cur_date != $date.format('yyyy-MM-dd', $vo.news.createdDate))
+                #if ($foreach.index > 0)
+            </div>
+            ## 上一个要收尾
+            #end
+            #set($cur_date = $date.format('yyyy-MM-dd', $vo.news.createdDate))
+            <h3 class="date">
+                <i class="fa icon-calendar"></i>
+                <span>&nbsp; $date.format('yyyy-MM-dd', $vo.news.createdDate)</span>
+            </h3>
+
+            <div class="posts">
+                #end
+                <div class="post">
+                    <div class="votebar">
+                        #if ($vo.like > 0)
+                        <button class="click-like up pressed" data-id="$!{vo.news.id}" title="赞同"><i
+                                class="vote-arrow"></i><span class="count">$!{vo.news.likeCount}</span></button>
+                        #else
+                        <button class="click-like up" data-id="$!{vo.news.id}" title="赞同"><i
+                                class="vote-arrow"></i><span class="count">$!{vo.news.likeCount}</span></button>
+                        #end
+                        #if($vo.like < 0)
+                        <button class="click-dislike down pressed" data-id="$!{vo.news.id}" title="反对"><i
+                                class="vote-arrow"></i></button>
+                        #else
+                        <button class="click-dislike down" data-id="$!{vo.news.id}" title="反对"><i
+                                class="vote-arrow"></i></button>
+                        #end
+                    </div>
+                    <div class="content">
+                        <div>
+                            <img class="content-img" src="$!{vo.news.image}?imageView2/1/w/100/h/80" alt="">
+                        </div>
+                        <div class="content-main">
+                            <h3 class="title">
+                                <a target="_blank" rel="external nofollow"
+                                   href="/news/$!{vo.news.id}">$!{vo.news.title}</a>
+                            </h3>
+                            <div class="meta">
+                                $!{vo.news.link}
+                                <span>
+                                            <i class="fa icon-comment"></i> $!{vo.news.commentCount}
+                                        </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <a href="/user/$!{vo.user.id}/"><img width="32" class="img-circle"
+                                                                 src="$!{vo.user.headUrl}"></a>
+                        </div>
+                    </div>
+
+                    <div class="subject-name">来自 <a href="/user/$!{vo.user.id}/">$!{vo.user.name}</a></div>
+                </div>
+                #if ($foreach.count == $vos.size()) ##最后有个元素要收尾
+            </div>
+            #end
+            #end
+
+
+            <ul class="pager">
+                <li><a href="/?&page=1">首页</a></li>
+                #if($up==0)
+                <li class="disabled"><a href="javascript:void(0)">上一页</a></li>
+                <li class="disabled"><a href="javascript:void(0)" style="background-color: rgb(213, 237, 219)">1</a>
+                <li><a href="/?&page=2">2</a></li>
+                <li><a href="/?&page=3">3</a></li>
+                <li><a href="/?&page=3">4</a></li>
+                <li><a href="/?&page=5">5</a></li>
+                <li><a href="/?&page=$!{down}">下一页</a></li>
+                <li><a href="/?&page=5">末页</a></li>
+            </ul>
+            #else
+            <li><a href="/?&page=$!{up}">上一页</a></li>
+            <li><a href="/?&page=1">1</a></li>
+            <li><a href="/?&page=2">2</a></li>
+            <li><a href="/?&page=3">3</a></li>
+            <li><a href="/?&page=3">4</a></li>
+            <li><a href="/?&page=5">5</a></li>
+            <li><a href="/?&page=$!{down}">下一页</a></li>
+            <li><a href="/?&page=5">末页</a></li>
+            </ul>
+            #end
+        </div>
+    </div>
+</div>
+</div>
+<script>
+    var href = window.location.href;
+    if (href.indexOf('pop') > 0) {
+        window.loginpop = 1;
+    }
+</script>
+#parse("footer.html")

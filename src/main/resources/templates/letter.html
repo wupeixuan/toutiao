@@ -1,0 +1,145 @@
+#parse("header.html")
+<script type="text/javascript" src="/scripts/main/site/letter.js"></script>
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"
+                        data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    发送私信
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="pop-content">
+                    <div id="jsCpn1">
+                        <div class=" form-group">
+                            <div class="form-group"><label class="col-sm-2 control-label">发给</label>
+                                <div class="col-sm-5">
+                                    <div class="dropdown">
+
+                                        <input type="text" id="username" autocomplete="off"
+                                               class="form-control dropdown-toggle" data-toggle="dropdown"
+                                               name="username">
+                                        <ul class="drop-menu" style="display: none;">
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-sm-5">
+                                    <span class="error text-danger" id="msg"></span>
+                                </div>
+                            </div>
+                            <div class="form-group"><label class="col-sm-2 control-label"></label>
+                                <div class="col-sm-10 latest-send">
+                                </div>
+                            </div>
+                            <div class="form-group"><label class="col-sm-2 control-label">内容</label>
+                                <div class="col-sm-10"><textarea rows="5"
+                                                                 class="text required comment-content form-control"
+                                                                 name="content"
+                                                                 id="content"></textarea></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-info btn-send">
+                    发送
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<div class="modal fade" id="delModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"
+                        data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    提示
+                </h4>
+            </div>
+            <div class="modal-body">
+                确定要删除整个会话信息吗？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-danger btn-del">
+                    确定
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
+<div id="main">
+    <div class="container">
+        <div class="text-right">
+            <button style="margin-right: 20px;" class="btn btn-info" data-toggle="modal"
+                    data-target="#myModal">
+                发送私信
+            </button>
+        </div>
+
+        <ul class="letter-list">
+            #foreach($conversation in $conversations)
+            <li id="conversation-item-10005_622873">
+                <a class="letter-link"
+                   href="/msg/detail?conversationId=$!{conversation.conversation.conversationId}"></a>
+                <div class="letter-info">
+                    <span class="l-time">$!date.format('yyyy-MM-dd HH:mm:ss', $!{conversation.conversation.createdDate})</span>
+                    <div class="l-operate-bar">
+                        <a href="javascript:void(0);" class="sns-action-del"
+                           data-id="$!{conversation.conversation.conversationId}">
+                            删除
+                        </a>
+                        <a href="/msg/detail?conversationId=$!{conversation.conversation.conversationId}">
+                            共$!{conversation.count}条会话
+                        </a>
+                    </div>
+                </div>
+                <div class="chat-headbox">
+                    #if( $conversation.unreadCount > 0)
+                    <span class="msg-num">
+                                $!{conversation.unreadCount}
+                        </span>
+                    #end
+                    <a class="list-head" href="/user/$!{conversation.user.id}">
+                        <img alt="头像" src="$!{conversation.user.headUrl}">
+                    </a>
+                </div>
+                <div class="letter-detail">
+                    <a title="$!{conversation.user.name}" class="letter-name level-color-1">
+                        $!{conversation.user.name}
+                    </a>
+                    <p class="letter-brief">
+                        <a href="/msg/detail?conversationId=$!{conversation.conversation.conversationId}">
+                            $!{conversation.conversation.content}
+                        </a>
+                    </p>
+                </div>
+            </li>
+            #end
+        </ul>
+
+    </div>
+</div>
+
+#parse("footer.html")
+
+
