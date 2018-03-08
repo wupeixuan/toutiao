@@ -19,7 +19,17 @@ public class JedisAdapter implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        pool = new JedisPool("localhost", 6379);
+        if (pool == null) {
+            JedisPoolConfig config = new JedisPoolConfig();
+            config.setMaxTotal(500);
+            config.setMaxIdle(5);
+            config.setMaxWaitMillis(1000 * 10);
+            //在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
+            config.setTestOnBorrow(true);
+//        pool = new JedisPool("localhost", 6379);
+//        pool = new JedisPool("140.143.163.252", 6379);
+            pool = new JedisPool(config, "140.143.163.252", 6379, 10000, "599BC4C9C085DD9FADE15B1E0DBDAED7");
+        }
     }
 
     private Jedis getJedis() {

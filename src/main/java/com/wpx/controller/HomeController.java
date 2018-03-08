@@ -58,8 +58,8 @@ public class HomeController {
         } catch (Exception e) {
             logger.error("获取站内信列表失败 " + e.getMessage());
         } finally {
-            model.addAttribute("up",page-1);
-            model.addAttribute("down",page+1);
+            model.addAttribute("up", page - 1);
+            model.addAttribute("down", page + 1);
             model.addAttribute("vos", getNews(0, (page - 1) * 10, page * 10));
             model.addAttribute("pop", pop);
             return "home";
