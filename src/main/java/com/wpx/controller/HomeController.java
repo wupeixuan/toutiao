@@ -46,15 +46,17 @@ public class HomeController {
     public String index(Model model,
                         @RequestParam(value = "pop", defaultValue = "0") int pop, @RequestParam(value = "page", defaultValue = "1") int page) {
         try {
-            int localUserId = hostHolder.getUser().getId();
-            List<ViewObject> conversations = new ArrayList<>();
-            List<Message> conversationList = messageService.getConversationList(localUserId, 0, 10);
-            for (Message msg : conversationList) {
-                ViewObject vo = new ViewObject();
-                vo.set("unreadCount", messageService.getConversationUnReadCount(localUserId, msg.getConversationId()));
-                conversations.add(vo);
+            if (hostHolder.getUser()!=null){
+                int localUserId = hostHolder.getUser().getId();
+                List<ViewObject> conversations = new ArrayList<>();
+                List<Message> conversationList = messageService.getConversationList(localUserId, 0, 10);
+                for (Message msg : conversationList) {
+                    ViewObject vo = new ViewObject();
+                    vo.set("unreadCount", messageService.getConversationUnReadCount(localUserId, msg.getConversationId()));
+                    conversations.add(vo);
+                }
+                model.addAttribute("conversations", conversations);
             }
-            model.addAttribute("conversations", conversations);
         } catch (Exception e) {
             logger.error("获取站内信列表失败 " + e.getMessage());
         } finally {

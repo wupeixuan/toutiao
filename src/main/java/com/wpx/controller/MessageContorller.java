@@ -1,13 +1,14 @@
 package com.wpx.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.wpx.model.*;
+import com.wpx.model.HostHolder;
+import com.wpx.model.Message;
+import com.wpx.model.User;
+import com.wpx.model.ViewObject;
 import com.wpx.service.MessageService;
 import com.wpx.service.UserService;
 import com.wpx.util.ToutiaoUtil;
 import org.apache.ibatis.annotations.Param;
-import org.apache.velocity.runtime.directive.Foreach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class MessageContorller {
             }
             model.addAttribute("conversations", conversations);
         } catch (Exception e) {
-            logger.error("获取站内信列表失败 " + e.getMessage());
+            logger.error("获取会话失败 " + e.getMessage());
         }
         return "letter";
     }
@@ -101,24 +102,7 @@ public class MessageContorller {
     }
 
 
-    @RequestMapping(path = {"/msg/addMessage"}, method = {RequestMethod.POST})
-    @ResponseBody
-    public String addMessage(@RequestParam("fromId") int fromId, @RequestParam("toId") int toId,
-                             @RequestParam("content") String content) {
-        try {
-            Message msg = new Message();
-            msg.setContent(content);
-            msg.setFromId(fromId);
-            msg.setToId(toId);
-            msg.setCreatedDate(new Date());
-            msg.setConversationId(fromId < toId ? String.format("%d_%d", fromId, toId) : String.format("%d_%d", toId, fromId));
-            messageService.addMessage(msg);
-            return ToutiaoUtil.getJSONString(msg.getId());
-        } catch (Exception e) {
-            logger.error("增加消息失败" + e.getMessage());
-            return ToutiaoUtil.getJSONString(1, "插入消息失败");
-        }
-    }
+
 
     /**
      * 最近联系
@@ -128,6 +112,9 @@ public class MessageContorller {
     @RequestMapping(path = {"/msg/latestSend"}, method = {RequestMethod.GET})
     @ResponseBody
     public String latestSend() {
+        if (hostHolder.getUser()==null){
+            return ToutiaoUtil.getJSONString(1, "没有最近");
+        }
         int localUserId = hostHolder.getUser().getId();
         List<User> list = messageService.getUsersByFromId(localUserId);
         List<Object> userList = new ArrayList<>();
@@ -168,11 +155,6 @@ public class MessageContorller {
 
     /**
      * 通过name获取User
-     *
-     * @param fromId
-     * @param toId
-     * @param content
-     * @return
      */
     @RequestMapping(value = {"/valname"}, method = {RequestMethod.POST})
     @ResponseBody
@@ -257,11 +239,6 @@ public class MessageContorller {
 
     /**
      * 删除会话
-     *
-     * @param conversationId
-     * @param response
-     * @return
-     * @throws Exceptione
      */
     @RequestMapping(value = {" /msg/delcvst"}, method = {RequestMethod.POST})
     @ResponseBody
@@ -279,9 +256,6 @@ public class MessageContorller {
 
     /**
      * 删除消息
-     *
-     * @param conversationId
-     * @return
      */
     @RequestMapping(value = {" /msg/delete"}, method = {RequestMethod.POST})
     @ResponseBody
