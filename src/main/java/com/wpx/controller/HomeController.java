@@ -1,10 +1,7 @@
 package com.wpx.controller;
 
 import com.wpx.model.*;
-import com.wpx.service.LikeService;
-import com.wpx.service.MessageService;
-import com.wpx.service.ToutiaoService;
-import com.wpx.service.UserService;
+import com.wpx.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +46,7 @@ public class HomeController {
             if (hostHolder.getUser()!=null){
                 int localUserId = hostHolder.getUser().getId();
                 List<ViewObject> conversations = new ArrayList<>();
-                List<Message> conversationList = messageService.getConversationList(localUserId, 0, 10);
+                List<Message> conversationList = messageService.getConversationList(localUserId, 0, 30);
                 for (Message msg : conversationList) {
                     ViewObject vo = new ViewObject();
                     vo.set("unreadCount", messageService.getConversationUnReadCount(localUserId, msg.getConversationId()));
@@ -60,9 +57,7 @@ public class HomeController {
         } catch (Exception e) {
             logger.error("获取站内信列表失败 " + e.getMessage());
         } finally {
-            model.addAttribute("up", page - 1);
-            model.addAttribute("down", page + 1);
-            model.addAttribute("vos", getNews(0, (page - 1) * 10, page * 10));
+            model.addAttribute("vos", getNews(0, (page - 1) * 10, page * 30));
             model.addAttribute("pop", pop);
             return "home";
         }
@@ -109,6 +104,4 @@ public class HomeController {
         }
         return vos;
     }
-
-
 }

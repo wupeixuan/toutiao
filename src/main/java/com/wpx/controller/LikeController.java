@@ -42,9 +42,12 @@ public class LikeController {
     @RequestMapping(path = {"/like"}, method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public String like(@RequestParam("newsId") int newsId) {
+        News news = newsService.getById(newsId);
+        if (hostHolder.getUser()==null){
+            return ToutiaoUtil.getJSONString(1);
+        }
         int userId = hostHolder.getUser().getId();
         long likeCount = likeService.like(userId, EntityType.ENTITY_NEWS, newsId);
-        News news = newsService.getById(newsId);
         //更新赞数
         newsService.updateLikeCount(newsId, (int) likeCount);
 
@@ -66,6 +69,9 @@ public class LikeController {
     @RequestMapping(path = {"/dislike"}, method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public String disLike(@RequestParam("newsId") int newsId) {
+        if (hostHolder.getUser()==null){
+            return ToutiaoUtil.getJSONString(1);
+        }
         int userId = hostHolder.getUser().getId();
         long likeCount = likeService.disLike(userId, EntityType.ENTITY_NEWS, newsId);
         newsService.updateLikeCount(newsId, (int) likeCount);

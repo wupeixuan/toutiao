@@ -1,5 +1,6 @@
 package com.wpx.service;
 
+import com.github.pagehelper.PageHelper;
 import com.wpx.dao.NewsDAO;
 import com.wpx.model.News;
 import org.springframework.beans.factory.annotation.Autowired;
