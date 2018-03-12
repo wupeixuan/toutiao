@@ -37,13 +37,13 @@ public class LoginExceptionHandler implements EventHandler {
         message.setConversationId("1_" + user.getId());
         messageService.addMessage(message);
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("username", model.getExt("username"));
         mailSender.sendWithHTMLTemplate(model.getExt("email"), "欢迎登录", "mails/welcome.html", map);
     }
 
     @Override
     public List<EventType> getSupportEventTypes() {
-        return Arrays.asList(EventType.LOGIN);
+        return Collections.singletonList(EventType.LOGIN);
     }
 }

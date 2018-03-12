@@ -28,7 +28,7 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
 
     //分化handler，做个路由映射
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         //找出所有实现了EventHandler的类。找出来以后组织起来。
         //每一个EventHandler
         Map<String, EventHandler> beans = applicationContext.getBeansOfType(EventHandler.class);
@@ -37,31 +37,28 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
                 List<EventType> eventTypes = entry.getValue().getSupportEventTypes();
                 for (EventType type : eventTypes) {
                     if (!config.containsKey(type)) {
-                        config.put(type, new ArrayList<EventHandler>());
+                        config.put(type, new ArrayList<>());
                     }
                     config.get(type).add(entry.getValue());
                 }
             }
         }
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    String key = RedisKeyUtil.getEventQueueKey();
-                    List<String> events = jedisAdapter.brpop(0, key);
-                    for (String message : events) {
-                        if (message.equals(key)) {
-                            continue;
-                        }
-                        //反序列化成EventModel
-                        EventModel eventModel = JSON.parseObject(message, EventModel.class);
-                        if (!config.containsKey(eventModel.getType())) {
-                            logger.error("不能识别的事件");
-                            continue;
-                        }
-                        for (EventHandler handler : config.get(eventModel.getType())) {
-                            handler.doHandler(eventModel);
-                        }
+        Thread thread = new Thread(() ->  {
+            while (true) {
+                String key = RedisKeyUtil.getEventQueueKey();
+                List<String> events = jedisAdapter.brpop(0, key);
+                for (String message : events) {
+                    if (message.equals(key)) {
+                        continue;
+                    }
+                    //反序列化成EventModel
+                    EventModel eventModel = JSON.parseObject(message, EventModel.class);
+                    if (!config.containsKey(eventModel.getType())) {
+                        logger.error("不能识别的事件");
+                        continue;
+                    }
+                    for (EventHandler handler : config.get(eventModel.getType())) {
+                        handler.doHandler(eventModel);
                     }
                 }
             }

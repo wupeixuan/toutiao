@@ -43,7 +43,7 @@ public class HomeController {
     public String index(Model model,
                         @RequestParam(value = "pop", defaultValue = "0") int pop, @RequestParam(value = "page", defaultValue = "1") int page) {
         try {
-            if (hostHolder.getUser()!=null){
+            if (hostHolder.getUser() != null) {
                 int localUserId = hostHolder.getUser().getId();
                 List<ViewObject> conversations = new ArrayList<>();
                 List<Message> conversationList = messageService.getConversationList(localUserId, 0, 30);
@@ -56,19 +56,19 @@ public class HomeController {
             }
         } catch (Exception e) {
             logger.error("获取站内信列表失败 " + e.getMessage());
-        } finally {
-            model.addAttribute("vos", getNews(0, (page - 1) * 10, page * 30));
-            model.addAttribute("pop", pop);
-            return "home";
         }
+        model.addAttribute("vos", getNews(0, (page - 1) * 10, page * 30));
+        model.addAttribute("pop", pop);
+        return "home";
+
     }
 
     /**
      * 用户发布的资讯
      *
-     * @param userId
-     * @param model
-     * @return
+     * @param userId 用户id
+     * @param model  模型
+     * @return 用户发布的资讯页面
      */
     @RequestMapping(path = {"/user/{userId}"}, method = {RequestMethod.GET, RequestMethod.POST})
     public String userIndex(@PathVariable("userId") int userId,
@@ -81,10 +81,10 @@ public class HomeController {
     /**
      * 加载资讯
      *
-     * @param userId
-     * @param offset
-     * @param limit
-     * @return
+     * @param userId 用户id
+     * @param offset 起始
+     * @param limit  限制条数
+     * @return 资讯视图
      */
     private List<ViewObject> getNews(int userId, int offset, int limit) {
         List<News> newsList = toutiaoService.getLatestNews(userId, offset, limit);
